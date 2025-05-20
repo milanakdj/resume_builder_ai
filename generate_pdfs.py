@@ -156,7 +156,6 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
         )
     draw_line()
     draw_empty_line()
-    draw_empty_line()
 
     # Technical Skills Section
     add_wrapped_text_with_styles("Technical Skills", font="Helvetica", size=12, bold_prefix=True)
@@ -164,6 +163,7 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     for category, skills in skills_data.items():
         add_wrapped_text_with_styles(category, ", ".join(skills), bold_prefix=True)
     draw_line()
+    draw_empty_line()
 
     # Work Experience Section
     add_wrapped_text_with_styles(
