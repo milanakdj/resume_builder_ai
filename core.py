@@ -1,5 +1,7 @@
 import yaml
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import os
 import argparse
 from extract_skills import (
@@ -24,7 +26,7 @@ def load_resume_skeleton(file_path="resume_skeleton.yaml"):
 def main(job_description="", job_name=""):
     os.makedirs("./outputs", exist_ok=True)
     file_name = (
-        f"{job_name}" + str(datetime.now().strftime("%d-%m-%Y_%H-%M-%S")) + ".docx"
+        f"{job_name}" + str(datetime.now(ZoneInfo("America/Toronto")).strftime("%d-%m-%Y_%H-%M-%S")) + ".docx"
     )
 
     class Namespace:
