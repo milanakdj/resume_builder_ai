@@ -172,7 +172,7 @@ def extract_summary_from_job(job_description, current_experiences, current_skill
                 {yaml.dump(current_experiences)}
 
 
-                Based on the following job description, extract a suitable summary that is short ans sweet with a maximum of 3 sentences.
+                Based on the following job description, extract a suitable summary that is short ans sweet with a maximum of 3 sentences. availability: Monday to Friday (Weekdays) 5 pm to Closing ; Sunday, Saturday (Weekends) 8am to 11 pm
 
                 Job Description:
                 {job_description}

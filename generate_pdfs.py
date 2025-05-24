@@ -10,7 +10,7 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     """
     c = canvas.Canvas(pdf_file, pagesize=letter)
     width, height = letter
-    margin = 50
+    margin = 35
     y = height - margin
     first_page = True
 
@@ -93,27 +93,27 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
         nonlocal y
         contact_text = f"P: {data['header']['contact']['phone']} | LinkedIn | Email"
         text_width = c.stringWidth(contact_text, "Helvetica", 12)
-        x = (width - text_width) / 2
+        x = 0 + 100
         c.setFont("Helvetica", 12)
 
         # Add Phone
         c.drawString(x, y, f"P: {data['header']['contact']['phone']}")
         x += c.stringWidth(
             f"P: {data['header']['contact']['phone']} | ", "Helvetica", 12
-        )
+        ) + 20
 
         # Add LinkedIn
         c.setFillColor(colors.blue)
-        c.drawString(x, y, "LinkedIn")
+        c.drawString(x, y, data["header"]["contact"]["linkedin"])
         c.linkURL(
             data["header"]["contact"]["linkedin"],
             (x, y - 2, x + c.stringWidth("LinkedIn", "Helvetica", 10), y + 10),
             relative=0,
         )
-        x += c.stringWidth("LinkedIn | ", "Helvetica", 12)
+        x += c.stringWidth(data["header"]["contact"]["linkedin"], "Helvetica", 12) + 20
 
         # Add Email
-        c.drawString(x, y, "Email")
+        c.drawString(x, y, data["header"]["contact"]["email"])
         c.linkURL(
             f"mailto:{data['header']['contact']['email']}",
             (x, y - 2, x + c.stringWidth("Email", "Helvetica", 10), y + 10),
@@ -134,14 +134,13 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     # Add contact info
     add_contact_info()
     draw_line()
-    draw_empty_line()
 
     # Summary Section
     add_wrapped_text_with_styles(
         "Summary", data["summary"], font="Helvetica", size=12, bold_prefix=True
     )
     draw_line()
-    draw_empty_line()
+    # draw_empty_line()
 
     # Education Section
     add_wrapped_text_with_styles(
@@ -155,15 +154,17 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
             f"GPA: {edu.get('gpa', 'N/A')} ({edu.get('graduation_date', 'N/A')})"
         )
     draw_line()
-    draw_empty_line()
+    # draw_empty_line()
 
     # Technical Skills Section
-    add_wrapped_text_with_styles("Technical Skills", font="Helvetica", size=12, bold_prefix=True)
-    skills_data = data['skills'].get("skills", {})
+    add_wrapped_text_with_styles(
+        "Technical Skills", font="Helvetica", size=12, bold_prefix=True
+    )
+    skills_data = data["skills"].get("skills", {})
     for category, skills in skills_data.items():
         add_wrapped_text_with_styles(category, ", ".join(skills), bold_prefix=True)
     draw_line()
-    draw_empty_line()
+    # draw_empty_line()
 
     # Work Experience Section
     add_wrapped_text_with_styles(
@@ -176,6 +177,15 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
         for responsibility in exp.get("responsibilities", []):
             add_wrapped_text_with_styles(f"- {responsibility}", indent=10)
     draw_line()
+    # draw_empty_line()
+
+    add_wrapped_text_with_styles(
+        "Availability",
+        data["availability"],
+        font="Helvetica",
+        size=12,
+        bold_prefix=True,
+    )
 
     # # Project Experience Section
     # add_wrapped_text_with_styles("Project Experience", font="Helvetica", size=12, bold_prefix=True)
