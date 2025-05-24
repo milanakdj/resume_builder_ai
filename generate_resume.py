@@ -97,6 +97,14 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
     # Add horizontal line below header
     add_horizontal_line(responsibility_paragraph)
     
+
+     # Availability Section
+    doc.add_heading("Availability", level=2)
+    availability_paragraph = doc.add_paragraph(data["availability"])
+    availability_paragraph.style.font.size = Pt(11)
+    set_paragraph_spacing(availability_paragraph, after=6)
+    # Add horizontal line below header
+    add_horizontal_line(availability_paragraph)
     
     # # Project Experience Section
     # doc.add_heading("Project Experience", level=2)
