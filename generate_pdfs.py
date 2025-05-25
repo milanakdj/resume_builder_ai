@@ -166,17 +166,33 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     draw_line()
     # draw_empty_line()
 
-    # Work Experience Section
-    add_wrapped_text_with_styles(
-        "Work Experience", font="Helvetica", size=12, bold_prefix=True
-    )
-    for exp in data["experience"].get("experience", {}):
+    
+    if data.get("experience"):
+        # Work Experience Section
         add_wrapped_text_with_styles(
-            f"{exp['title']} - {exp['company']} ({exp['duration']})", bold_prefix=True
+            "Work Experience", font="Helvetica", size=12, bold_prefix=True
         )
-        for responsibility in exp.get("responsibilities", []):
-            add_wrapped_text_with_styles(f"- {responsibility}", indent=10)
-    draw_line()
+        for exp in data["experience"].get("experience", {}):
+            add_wrapped_text_with_styles(
+                f"{exp['title']} - {exp['company']} ({exp['duration']})", bold_prefix=True
+            )
+            for responsibility in exp.get("responsibilities", []):
+                add_wrapped_text_with_styles(f"- {responsibility}", indent=10)
+        draw_line()
+    elif data.get("projects"):
+            # Project Experience Section
+        add_wrapped_text_with_styles("Project Experience", font="Helvetica", size=12, bold_prefix=True)
+        for project in data["projects"]:
+            add_wrapped_text_with_styles(project["name"], project["description"], bold_prefix=True)
+
+
+        # for project in data.get("projects", {}):
+        #     add_wrapped_text_with_styles(
+        #         f"{project['name']}", bold_prefix=True
+        #     )
+        #     for responsibility in project.get("description", []):
+        #         add_wrapped_text_with_styles(f"- {responsibility}", indent=10)
+        draw_line()
     # draw_empty_line()
 
     add_wrapped_text_with_styles(
@@ -187,10 +203,7 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
         bold_prefix=True,
     )
 
-    # # Project Experience Section
-    # add_wrapped_text_with_styles("Project Experience", font="Helvetica", size=12, bold_prefix=True)
-    # for project in data["projects"]:
-    #     add_wrapped_text_with_styles(project["name"], project["description"], bold_prefix=True)
+    
 
     # Save the PDF
     c.save()

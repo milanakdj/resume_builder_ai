@@ -8,12 +8,14 @@ from extract_skills import (
     extract_skills_from_job,
     extract_experiences_from_job,
     extract_summary_from_job,
+    extract_projects_from_job
 )
 from generate_resume import generate_compact_resume
 from docx_utils import (
     update_resume_with_skills,
     update_resume_with_experience,
     update_resume_with_summary,
+    update_resume_with_project
 )
 
 
@@ -23,7 +25,7 @@ def load_resume_skeleton(file_path="resume_skeleton.yaml"):
         return yaml.safe_load(file)
 
 
-def main(job_description="", job_name=""):
+def main(job_description="", job_name="", it_check:bool = False):
     os.makedirs("./outputs", exist_ok=True)
     file_name = (
         f"{job_name}_" + str(datetime.now(ZoneInfo("Canada/Central")).strftime("%d-%m-%Y_%H-%M-%S")) + ".docx"
@@ -44,25 +46,31 @@ def main(job_description="", job_name=""):
 
     # Step 2: Extract and Enhance Skills
     current_skills = resume_skeleton["skills"]
-    current_experiences = resume_skeleton["experience"]
+    if it_check:
+        current_projects = resume_skeleton["projects"]
+        enhanced_projects = extract_projects_from_job(args.job_description, current_projects)
+        print("enhanced projects: ", enhanced_projects, "\n\n")
+        updated_resume = update_resume_with_project(resume_skeleton, enhanced_projects)
+        updated_resume = update_resume_with_experience(resume_skeleton, {})
+        enhanced_experiences = ""
+    else:
+        current_experiences = resume_skeleton["experience"]
+        enhanced_experiences = extract_experiences_from_job(args.job_description, current_experiences)
+        print("enhanced experiences: ", enhanced_experiences, "\n\n")
+        updated_resume = update_resume_with_experience(resume_skeleton, enhanced_experiences)
+        updated_resume = update_resume_with_project(resume_skeleton, {})
+        enhanced_projects = ""
+
     current_summary = resume_skeleton["summary"]
 
     enhanced_skills = extract_skills_from_job(args.job_description, current_skills)
     print("enhanced skills: ", enhanced_skills, "\n\n")
-    enhanced_experiences = extract_experiences_from_job(
-        args.job_description, current_experiences
-    )
-    print("enhanced experiences: ", enhanced_experiences, "\n\n")
-    enhanced_summary = extract_summary_from_job(
-        args.job_description, current_skills, current_experiences, current_summary
-    )
+
+    enhanced_summary = extract_summary_from_job(args.job_description, enhanced_skills, enhanced_projects, enhanced_experiences,current_summary)
     print("enhanced summary: ", enhanced_summary, "\n\n")
 
     # Step 3: Update Resume Skeleton with Enhanced Skills
     updated_resume = update_resume_with_skills(resume_skeleton, enhanced_skills)
-    updated_resume = update_resume_with_experience(
-        resume_skeleton, enhanced_experiences
-    )
     updated_resume = update_resume_with_summary(resume_skeleton, enhanced_summary)
 
     # Step 4: Generate Resume

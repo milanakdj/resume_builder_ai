@@ -16,6 +16,13 @@ def update_resume_with_experience(skeleton, experiences):
     skeleton["experience"] = experiences
     return skeleton
 
+def update_resume_with_project(skeleton, projects):
+    """
+    Replace the skills section in the resume skeleton with the updated skills.
+    """
+    skeleton["project"] = projects
+    return skeleton
+
 def update_resume_with_summary(skeleton, summary):
     """
     Replace the skills section in the resume skeleton with the updated skills.

@@ -82,20 +82,41 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
         # Add horizontal line below header
         add_horizontal_line(skills_paragraph)
 
-    # Work Experience Section
-    doc.add_heading("Work Experience", level=2)
-    for exp in data["experience"].get("experience", {}):
-        work_heading = doc.add_paragraph()
-        
-        work_heading.add_run(f"{exp['title']} - {exp['company']} | ").bold = True
-        work_heading.add_run(f"({exp['duration']})").italic = True
-        set_paragraph_spacing(work_heading, after=2)
-        for responsibility in exp.get("responsibilities", []):
-            responsibility_paragraph = doc.add_paragraph(f"{responsibility}", style="List Bullet")
-            responsibility_paragraph.style.font.size = Pt(10)
-            set_paragraph_spacing(responsibility_paragraph, after=1)
-    # Add horizontal line below header
-    add_horizontal_line(responsibility_paragraph)
+    if data.get("projects"):
+        # Project Experience Section
+        doc.add_heading("Project Experience", level=2)
+        for project in data["projects"]:
+            # Create a paragraph for the project
+            project_paragraph = doc.add_paragraph()
+
+            # Add the project name in bold
+            project_name_run = project_paragraph.add_run(f"{project['name']}: ")
+            project_name_run.bold = True
+            project_name_run.font.size = Pt(11)
+
+            # Add the project description in regular font
+            project_description_run = project_paragraph.add_run(project["description"])
+            project_description_run.font.size = Pt(10)
+
+            # Adjust spacing
+            set_paragraph_spacing(project_paragraph, after=2)
+
+    elif data.get("experience"):
+
+        # Work Experience Section
+        doc.add_heading("Work Experience", level=2)
+        for exp in data["experience"].get("experience", {}):
+            work_heading = doc.add_paragraph()
+            
+            work_heading.add_run(f"{exp['title']} - {exp['company']} | ").bold = True
+            work_heading.add_run(f"({exp['duration']})").italic = True
+            set_paragraph_spacing(work_heading, after=2)
+            for responsibility in exp.get("responsibilities", []):
+                responsibility_paragraph = doc.add_paragraph(f"{responsibility}", style="List Bullet")
+                responsibility_paragraph.style.font.size = Pt(10)
+                set_paragraph_spacing(responsibility_paragraph, after=1)
+        # Add horizontal line below header
+        add_horizontal_line(responsibility_paragraph)
     
 
      # Availability Section
@@ -106,23 +127,7 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
     # Add horizontal line below header
     add_horizontal_line(availability_paragraph)
     
-    # # Project Experience Section
-    # doc.add_heading("Project Experience", level=2)
-    # for project in data["projects"]:
-    #     # Create a paragraph for the project
-    #     project_paragraph = doc.add_paragraph()
-
-    #     # Add the project name in bold
-    #     project_name_run = project_paragraph.add_run(f"{project['name']}: ")
-    #     project_name_run.bold = True
-    #     project_name_run.font.size = Pt(11)
-
-    #     # Add the project description in regular font
-    #     project_description_run = project_paragraph.add_run(project["description"])
-    #     project_description_run.font.size = Pt(10)
-
-    #     # Adjust spacing
-    #     set_paragraph_spacing(project_paragraph, after=2)
+    
 
     # Save the document
     doc.save(output_file)

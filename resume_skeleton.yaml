@@ -78,8 +78,31 @@ experience:
       - "Maintained up-to-date records of product movement and availability."
 
 projects:
-  - name: " "
+  - name: "REST API Application"
     description: >
+      Developed a full-featured REST API using FastAPI for high-performance backend services. 
+      Utilized PostgreSQL with SQLAlchemy as the ORM for scalable CRUD operations. 
+      Followed RESTful principles to ensure structured and efficient client communication.
+      Tech stack includes FastAPI, PostgreSQL, SQLAlchemy, and Pydantic.
+
+  - name: "Bug-Smashing Game"
+    description: >
+      Created an interactive web-based bug-smashing game using JavaScript and HTML5 Canvas. 
+      Implemented real-time rendering, dynamic difficulty, smooth animations, and sound effects 
+      using the JavaScript Audio API and requestAnimationFrame.
+
+  - name: "E-commerce Storefront"
+    description: >
+      Built a full-stack e-commerce platform with a Flask backend and Vue.js frontend. 
+      Integrated MySQL and SQLAlchemy for database management, and added secure checkout using the Stripe API. 
+      Features include product browsing, cart handling, and order management.
+
+  - name: "Todo Application"
+    description: >
+      Developed a full-stack Todo Application with Angular frontend and a Node.js/Express.js backend. 
+      Used MongoDB with Mongoose for database operations, enabling efficient task creation, updates, and deletion 
+      through a RESTful API interface.
+
     
 skills:
   Customer-focused service and engagement:
