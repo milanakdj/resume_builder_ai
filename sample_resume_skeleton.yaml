@@ -1,0 +1,69 @@
+header:
+  name: "xyz"
+  contact:
+    phone: "(123)- 123456 "
+    email: "xyz@gmail.com"
+    linkedin: "linkedin.com/in/xyz"
+summary: >
+  Friendly and engaging team member with strong experience in ....
+education:
+  - university: "Software Engineering Technician"
+    degree: "Associate Of Applied Science"
+    gpa: "3.5"
+    graduation_date: "Dec 2020"
+experience:
+  - title: "Team Member"
+    company: "QWERTY, Toronto, Canada"
+    duration: "Jul 2024"
+    responsibilities:
+      - "Delivered excellent service by assisting customers with product selection and addressing inquiries."
+      - "Maintained visually appealing displays and organized merchandise for easy navigation. "
+      - "Performed store opening/closing duties including cash handling and workspace preparation. "
+      - "Worked collaboratively with team members to support store goals and enhance customer satisfaction. "
+  - title: "Team Member "
+    company: "XYZ, ON "
+    duration: "Dec 2022 - Jun 2023 "
+    responsibilities:
+      - "Provided friendly and efficient service at the counter, managing orders with accuracy and speed. "
+      - "Operated POS system, processed payments, and ensured correct change was given. "
+      - "Maintained a clean and inviting customer area by regularly sanitizing surfaces and restocking supplies.  "
+      - "Contributed to a team-focused environment while balancing speed and quality under pressure. "
+  
+projects:
+  - name: "REST API Application"
+    description: >
+      Developed a full-featured REST API using FastAPI for high-performance backend services. 
+      Utilized PostgreSQL with SQLAlchemy as the ORM for scalable CRUD operations. 
+      Followed RESTful principles to ensure structured and efficient client communication.
+      Tech stack includes FastAPI, PostgreSQL, SQLAlchemy, and Pydantic.
+
+  - name: "E-commerce Storefront"
+    description: >
+      Built a full-stack e-commerce platform with a Flask backend and Vue.js frontend. 
+      Integrated MySQL and SQLAlchemy for database management, and added secure checkout using the Stripe API. 
+      Features include product browsing, cart handling, and order management.
+
+  - name: "Todo Application"
+    description: >
+      Developed a full-stack Todo Application with Angular frontend and a Node.js/Express.js backend. 
+      Used MongoDB with Mongoose for database operations, enabling efficient task creation, updates, and deletion 
+      through a RESTful API interface.
+
+    
+skills:
+  Customer-focused service and engagement:
+    - "Delivers attentive and friendly service to meet customer needs"
+    - "Creates a positive shopping experience through personalized assistance"
+
+  Strong communication and teamwork:
+    - "Communicates effectively with coworkers and supervisors"
+    - "Collaborates to achieve team goals and resolve issues"
+
+  Knowledge of product placement and visual organization:
+    - "Arranges merchandise for maximum visibility and appeal"
+    - "Follows display guidelines to enhance store layout"
+
+
+
+availability:
+  Monday to Friday (Weekdays) 5 pm to Closing ; Sunday, Saturday (Weekends) 8am to 11 pm
