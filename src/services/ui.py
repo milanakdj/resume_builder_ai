@@ -17,5 +17,11 @@ demo = gr.Interface(
     title="Resume generator",
 )
 
+
+def return_gradio_ui(app):
+    app = gr.mount_gradio_app(app= app, path = "/gradio_ui", blocks= demo)
+    return app
+
+
 if __name__ == "__main__":
     demo.launch()
