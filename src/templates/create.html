@@ -33,9 +33,23 @@
             `;
             container.insertAdjacentHTML("beforeend", html);
         }
+        function addSkills() {
+            const container = document.getElementById("skills");
+            const index = container.children.length;
+            const html = `
+                <div class="skills">
+                    <h4>Skill #${index + 1}</h4>
+                    <label>Name:</label><input type="text" name="skill_name"><br>
+                    <label>Description:</label><br>
+                    <textarea name="skill_description" rows="3" cols="60"></textarea><br>
+                </div>
+                <hr>
+            `;
+            container.insertAdjacentHTML("beforeend", html);
+        }
     </script>
 <h2>Fill Resume Details</h2>
-    <form method="post" action="/generate_yaml/">
+    <form method="post" action="/generate_json/">
 
         <h3>Header</h3>
         <label>File Name:</label>
@@ -67,14 +81,13 @@
         <button type="button" onclick="addProject()">Add Project</button>
 
         <h3>Skills</h3>
-        <label>Category:</label><input type="text" name="skill_category"><br>
-        <label>Skills (comma-separated):</label><br>
-        <textarea name="skill_items" rows="3" cols="60"></textarea>
+        <div id="skills"></div>
+        <button type="button" onclick="addSkills()">Add Skills</button>
 
         <h3>Availability</h3>
         <textarea name="availability" rows="2" cols="60"></textarea><br><br>
 
-        <button type="submit">Generate YAML</button>
+        <button type="submit">Generate</button>
     </form>
 
 {% endblock %}

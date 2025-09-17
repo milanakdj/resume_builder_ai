@@ -7,3 +7,5 @@ __pycache__/
 myenv
 outputs
 resume_skeleton.yaml
+yaml_files
+json_files
