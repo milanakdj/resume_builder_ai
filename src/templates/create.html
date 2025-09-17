@@ -2,6 +2,21 @@
 
 {% block content %}
 <script>
+        function addEducation() {
+                const container = document.getElementById("education");
+                const index = container.children.length;
+                const html = `
+                    <div class="education">
+                        <h4>Education #${index + 1}</h4>
+                        <label>University:</label><input type="text" name="education_university"><br>
+                        <label>Degree:</label><input type="text" name="education_degree"><br>
+                        <label>GPA:</label><input type="text" name="education_gpa"><br>
+                        <label>Graduation Date:</label><input type="text" name="education_graduation_date"><br>
+                    </div>
+                    <hr>
+                `;
+                container.insertAdjacentHTML("beforeend", html);
+            }
         function addExperience() {
             const container = document.getElementById("experiences");
             const index = container.children.length;
@@ -67,10 +82,8 @@
         <textarea name="summary" rows="5" cols="60"></textarea><br>
 
         <h3>Education</h3>
-        <label>University:</label><input type="text" name="education_university"><br>
-        <label>Degree:</label><input type="text" name="education_degree"><br>
-        <label>GPA:</label><input type="text" name="education_gpa"><br>
-        <label>Graduation Date:</label><input type="text" name="education_graduation_date"><br>
+        <div id="education"></div>
+        <button type="button" onclick="addEducation()">Add Education</button>
 
         <h3>Experiences</h3>
         <div id="experiences"></div>

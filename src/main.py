@@ -35,9 +35,13 @@ async def home():
 
 router = APIRouter(prefix="/auth")
 
-@app.get("/")
-def sign_in_form(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+@app.get("/", )
+def sign_in_form(request: Request, ):
+    user = request.session.get("user")
+    if user:
+        return RedirectResponse(url="/resume_ai", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        return templates.TemplateResponse("login.html", {"request": request})
 
 @router.post("/login/")
 async def login(request: Request):
@@ -93,12 +97,20 @@ async def generate(request: Request, user_name = Depends(require_login)):
     summary = form.get("summary")
 
     # ---------- EDUCATION ----------
-    education = {
-        "university": form.get("education_university"),
-        "degree": form.get("education_degree"),
-        "gpa": form.get("education_gpa"),
-        "graduation_date": form.get("education_graduation_date")
-    }
+    edu_universities = form.getlist("education_university")
+    edu_degrees = form.getlist("education_degree")
+    edu_gpas = form.getlist("education_gpa")
+    edu_graduation_dates = form.getlist("education_graduation_date")
+
+    education = []
+    for i in range(len(edu_universities)):
+        if edu_universities[i].strip():  # skip empty entries
+            education.append({
+                "university": edu_universities[i],
+                "degree": edu_degrees[i],
+                "gpa": edu_gpas[i],
+                "graduation_date": edu_graduation_dates[i]
+            })
 
     # ---------- EXPERIENCES ----------
     exp_titles = form.getlist("experience_title")
