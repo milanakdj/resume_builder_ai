@@ -158,6 +158,7 @@ async def generate(request: Request, user_name = Depends(require_login)):
     with open(file_name, "w") as f:
         f.write(yaml_text)
 
+    return RedirectResponse("/resume_ai")
 
 app = return_gradio_ui(app= app, auth_dependency= require_login)
 app.include_router(router= router)

@@ -1,0 +1,28 @@
+header:
+  name: milan
+  contact:
+    phone: '1030921'
+    email: milan@gmail.com
+    linkedin: linkedin1
+summary: hello there
+education:
+  university: xyz
+  degree: bca
+  gpa: '3.5'
+  graduation_date: '2019'
+experience:
+- title: ceo
+  company: comp
+  duration: '2'
+  responsibilities:
+  - wwe
+  - tnt
+- title: cto
+  company: wwo
+  duration: '3'
+  responsibilities:
+  - yea
+  - 'no'
+projects: []
+skills: {}
+availability: ''
