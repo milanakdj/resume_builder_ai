@@ -17,8 +17,11 @@
       </style>
    </head>
    <body>
+         <p>{% for error in errors%}</p>
+         <br>{{error}}
+         {% endfor %}
         <h1>User Login</h1>
-        <form method="POST">
+        <form method="POST" action = "/auth/login">
             <label for="video-upload" class="upload-btn">Username</label>
             <input type="text" required placeholder="Your email" name="email" value="{{email}}" class="form-control">
             <br>
@@ -31,6 +34,6 @@
 
             <button type="submit" class="upload-btn">Submit</button>
         </form>
-      
+        
    </body>
 </html>

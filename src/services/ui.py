@@ -18,8 +18,8 @@ demo = gr.Interface(
 )
 
 
-def return_gradio_ui(app):
-    app = gr.mount_gradio_app(app= app, path = "/gradio_ui", blocks= demo)
+def return_gradio_ui(app, auth_dependency):
+    app = gr.mount_gradio_app(app= app, path = "/gradio_ui", blocks= demo, auth_dependency= auth_dependency)
     return app
 
 
