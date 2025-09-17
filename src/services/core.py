@@ -4,14 +4,14 @@ from zoneinfo import ZoneInfo
 
 import os
 import argparse
-from src.extract_skills import (
+from src.services.extract_skills import (
     extract_skills_from_job,
     extract_experiences_from_job,
     extract_summary_from_job,
     extract_projects_from_job
 )
-from src.generate_resume import generate_compact_resume
-from src.docx_utils import (
+from src.services.generate_resume import generate_compact_resume
+from src.services.docx_utils import (
     update_resume_with_skills,
     update_resume_with_experience,
     update_resume_with_summary,

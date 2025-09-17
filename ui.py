@@ -1,5 +1,5 @@
 import gradio as gr
-from src.core import main
+from src.services.core import main
 
 
 def generate_resume(job_name, job_description, it_check:bool):

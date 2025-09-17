@@ -1,10 +1,10 @@
 from docx import Document
 from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from src.docx_utils import set_paragraph_spacing, add_hyperlink, add_horizontal_line
+from src.services.docx_utils import set_paragraph_spacing, add_hyperlink, add_horizontal_line
 import pypandoc
 import os
-from src.generate_pdfs import save_as_pdf
+from src.services.generate_pdfs import save_as_pdf
 
 
 def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf=False):
