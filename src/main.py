@@ -8,7 +8,7 @@ from src.models.login import LoginForm
 from src.services.ui import return_gradio_ui
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi import HTTPException, status
-import yaml
+import json
 from datetime import datetime
 from contextlib import asynccontextmanager
 
@@ -35,9 +35,13 @@ async def home():
 
 router = APIRouter(prefix="/auth")
 
-@app.get("/")
-def sign_in_form(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+@app.get("/", )
+def sign_in_form(request: Request, ):
+    user = request.session.get("user")
+    if user:
+        return RedirectResponse(url="/resume_ai", status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        return templates.TemplateResponse("login.html", {"request": request})
 
 @router.post("/login/")
 async def login(request: Request):
@@ -74,11 +78,12 @@ async def create(request: Request, user_name = Depends(require_login)):
     return templates.TemplateResponse("create.html", {"request": request, "username": user_name})
 
 
-@app.post("/generate_yaml")
+@app.post("/generate_json")
 async def generate(request: Request, user_name = Depends(require_login)):
     form = await request.form()
 
     # ---------- HEADER ----------
+    file_name = form.get("file_name")
     header = {
         "name": form.get("header_name"),
         "contact": {
@@ -92,12 +97,20 @@ async def generate(request: Request, user_name = Depends(require_login)):
     summary = form.get("summary")
 
     # ---------- EDUCATION ----------
-    education = {
-        "university": form.get("education_university"),
-        "degree": form.get("education_degree"),
-        "gpa": form.get("education_gpa"),
-        "graduation_date": form.get("education_graduation_date")
-    }
+    edu_universities = form.getlist("education_university")
+    edu_degrees = form.getlist("education_degree")
+    edu_gpas = form.getlist("education_gpa")
+    edu_graduation_dates = form.getlist("education_graduation_date")
+
+    education = []
+    for i in range(len(edu_universities)):
+        if edu_universities[i].strip():  # skip empty entries
+            education.append({
+                "university": edu_universities[i],
+                "degree": edu_degrees[i],
+                "gpa": edu_gpas[i],
+                "graduation_date": edu_graduation_dates[i]
+            })
 
     # ---------- EXPERIENCES ----------
     exp_titles = form.getlist("experience_title")
@@ -128,17 +141,22 @@ async def generate(request: Request, user_name = Depends(require_login)):
             })
 
     # ---------- SKILLS ----------
-    skill_category = form.get("skill_category", "").strip()
-    skill_items = form.get("skill_items", "").strip()
-    skills = {}
-    if skill_category and skill_items:
-        skills[skill_category] = [s.strip() for s in skill_items.split(",") if s.strip()]
+    skill_names = form.getlist("skill_name")
+    skill_descriptions = form.getlist("skill_description")
+
+    skills = []
+    for i in range(len(skill_names)):
+        if skill_names[i].strip():
+            skills.append({
+                "name": skill_names[i],
+                "description": skill_descriptions[i]
+            })
 
     # ---------- AVAILABILITY ----------
     availability = form.get("availability")
 
     # ---------- FINAL DATA ----------
-    yaml_data_dict = {
+    data_dict = {
         "header": header,
         "summary": summary,
         "education": education,
@@ -148,17 +166,17 @@ async def generate(request: Request, user_name = Depends(require_login)):
         "availability": availability
     }
 
-    # Convert to YAML string
-    yaml_text = yaml.dump(yaml_data_dict, sort_keys=False, allow_unicode=True)
+    # Add to a file
     now = datetime.now()
     formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")  
-    output_dir = "yaml_files"
+    output_dir = "json_files"
     os.makedirs(output_dir, exist_ok= True)
-    file_name = f"{output_dir}/{header['name']}_{formatted_date}.yaml" 
-    with open(file_name, "w") as f:
-        f.write(yaml_text)
+    output_file_name = f"{output_dir}/{file_name}_{formatted_date}.json" 
+    with open(output_file_name, "w") as f:
+        json.dump(data_dict, f, indent =4)
 
-    return RedirectResponse("/resume_ai")
+    return RedirectResponse(url="/resume_ai", status_code=status.HTTP_302_FOUND)
+
 
 app = return_gradio_ui(app= app, auth_dependency= require_login)
 app.include_router(router= router)

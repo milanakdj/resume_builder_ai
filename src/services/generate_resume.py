@@ -56,31 +56,32 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
         set_paragraph_spacing(education_paragraph, after=2)
     # Add horizontal line below header
     add_horizontal_line(education_paragraph)
-    
-    
-    # Technical Skills Section
-    doc.add_heading("Technical Skills", level=2)
-    # Access the nested dictionary under the "Skills" key
-    skills_data = data['skills'].get("skills", {})  # Get the nested dictionary or an empty one if missing
-    if not skills_data:
-        print("No skills data found. Skipping Technical Skills section.")
-    else:
-        # Add each category and its skills in a single line
-        for category, skills in skills_data.items():
-        # Create a new paragraph for each category and skills
-            skills_paragraph = doc.add_paragraph()
-            # Add the category in bold
-            category_run = skills_paragraph.add_run(f"{category}: ")
-            category_run.bold = True
-            category_run.font.size = Pt(10)
-            # Add the skills in regular font
-            skills_run = skills_paragraph.add_run(", ".join(skills))
-            skills_run.font.size = Pt(10)
-            # Adjust spacing
-            set_paragraph_spacing(skills_paragraph, after=1)
 
-        # Add horizontal line below header
-        add_horizontal_line(skills_paragraph)
+    
+    if data.get("skills"):
+        # Technical Skills Section
+        doc.add_heading("Technical Skills", level=2)
+        # Access the nested dictionary under the "Skills" key
+        skills_data = data['skills'].get("skills", [])  # Get the nested dictionary or an empty one if missing
+        if not skills_data:
+            print("No skills data found. Skipping Technical Skills section.")
+        else:
+            # Add each category and its skills in a single line
+            for skill in skills_data:
+            # Create a new paragraph for each category and skills
+                skills_paragraph = doc.add_paragraph()
+                # Add the category in bold
+                category_run = skills_paragraph.add_run(f"{skill['name']}: ")
+                category_run.bold = True
+                category_run.font.size = Pt(10)
+                # Add the skills in regular font
+                skills_run = skills_paragraph.add_run(", ".join(skill['description']))
+                skills_run.font.size = Pt(10)
+                # Adjust spacing
+                set_paragraph_spacing(skills_paragraph, after=1)
+
+            # Add horizontal line below header
+            add_horizontal_line(skills_paragraph)
 
     if data.get("projects"):
         # Project Experience Section
@@ -101,7 +102,7 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
             # Adjust spacing
             set_paragraph_spacing(project_paragraph, after=2)
 
-    elif data.get("experience"):
+    if data.get("experience"):
 
         # Work Experience Section
         doc.add_heading("Work Experience", level=2)

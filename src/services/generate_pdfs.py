@@ -160,9 +160,9 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     add_wrapped_text_with_styles(
         "Technical Skills", font="Helvetica", size=12, bold_prefix=True
     )
-    skills_data = data["skills"].get("skills", {})
-    for category, skills in skills_data.items():
-        add_wrapped_text_with_styles(category, ", ".join(skills), bold_prefix=True)
+    skills_data = data["skills"].get("skills", [])
+    for skill in skills_data:
+        add_wrapped_text_with_styles(skill['name'], ", ".join(skill['description']), bold_prefix=True)
     draw_line()
     # draw_empty_line()
 
