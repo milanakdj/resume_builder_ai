@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo app</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+
+    </head>
+
+    <body>
+        <div class="container">
+                    {% include "_navheader.html" %}
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
+
+</html>

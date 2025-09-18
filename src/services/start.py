@@ -1,8 +1,8 @@
 import yaml
 import argparse
-from extract_skills import extract_skills_from_job
-from generate_resume import generate_compact_resume
-from docx_utils import update_resume_with_skills
+from src.services.extract_skills import extract_skills_from_job
+from src.services.generate_resume import generate_compact_resume
+from src.services.docx_utils import update_resume_with_skills
 
 def load_resume_skeleton(file_path="resume_skeleton.yaml"):
     """Load the resume skeleton from a YAML file."""

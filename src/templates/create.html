@@ -1,0 +1,80 @@
+{% extends 'baselayout.html' %}
+
+{% block content %}
+<script>
+        function addExperience() {
+            const container = document.getElementById("experiences");
+            const index = container.children.length;
+            const html = `
+                <div class="experience">
+                    <h4>Experience #${index + 1}</h4>
+                    <label>Title:</label><input type="text" name="experience_title"><br>
+                    <label>Company:</label><input type="text" name="experience_company"><br>
+                    <label>Duration:</label><input type="text" name="experience_duration"><br>
+                    <label>Responsibilities (comma-separated):</label><br>
+                    <textarea name="experience_responsibilities" rows="3" cols="60"></textarea><br>
+                </div>
+                <hr>
+            `;
+            container.insertAdjacentHTML("beforeend", html);
+        }
+
+        function addProject() {
+            const container = document.getElementById("projects");
+            const index = container.children.length;
+            const html = `
+                <div class="project">
+                    <h4>Project #${index + 1}</h4>
+                    <label>Name:</label><input type="text" name="project_name"><br>
+                    <label>Description:</label><br>
+                    <textarea name="project_description" rows="3" cols="60"></textarea><br>
+                </div>
+                <hr>
+            `;
+            container.insertAdjacentHTML("beforeend", html);
+        }
+    </script>
+<h2>Fill Resume Details</h2>
+    <form method="post" action="/generate_yaml/">
+
+        <h3>Header</h3>
+        <label>File Name:</label>
+        <input type="text" name="file_name" required><br>
+        <label>Name:</label>
+        <input type="text" name="header_name" required><br>
+        <label>Phone:</label>
+        <input type="text" name="header_phone"><br>
+        <label>Email:</label>
+        <input type="email" name="header_email"><br>
+        <label>LinkedIn:</label>
+        <input type="text" name="header_linkedin"><br>
+
+        <h3>Summary</h3>
+        <textarea name="summary" rows="5" cols="60"></textarea><br>
+
+        <h3>Education</h3>
+        <label>University:</label><input type="text" name="education_university"><br>
+        <label>Degree:</label><input type="text" name="education_degree"><br>
+        <label>GPA:</label><input type="text" name="education_gpa"><br>
+        <label>Graduation Date:</label><input type="text" name="education_graduation_date"><br>
+
+        <h3>Experiences</h3>
+        <div id="experiences"></div>
+        <button type="button" onclick="addExperience()">Add Experience</button>
+
+        <h3>Projects</h3>
+        <div id="projects"></div>
+        <button type="button" onclick="addProject()">Add Project</button>
+
+        <h3>Skills</h3>
+        <label>Category:</label><input type="text" name="skill_category"><br>
+        <label>Skills (comma-separated):</label><br>
+        <textarea name="skill_items" rows="3" cols="60"></textarea>
+
+        <h3>Availability</h3>
+        <textarea name="availability" rows="2" cols="60"></textarea><br><br>
+
+        <button type="submit">Generate YAML</button>
+    </form>
+
+{% endblock %}
