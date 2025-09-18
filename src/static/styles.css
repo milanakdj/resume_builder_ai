@@ -10,7 +10,6 @@
 }
 
 
-
 /* Enhanced Navbar Styles */
 .navbar {
     display: flex;
@@ -55,16 +54,18 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 2px 0; /* Add margin to compensate for transform */
 }
 
 .navbar .left .create a:hover {
     background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Remove translateY to prevent layout shift */
 }
 
 .navbar .left .create a:active {
-    transform: translateY(0);
+    transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -80,16 +81,18 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 2px 0; /* Add margin to compensate for transform */
 }
 
 .navbar .left .resume a:hover {
     background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Remove translateY to prevent layout shift */
 }
 
 .navbar .left .resume a:active {
-    transform: translateY(0);
+    transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -120,16 +123,18 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 2px 0; /* Add margin to compensate for transform */
 }
 
 .navbar .logout a:hover {
     background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Remove translateY to prevent layout shift */
 }
 
 .navbar .logout a:active {
-    transform: translateY(0);
+    transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -254,8 +259,6 @@
         color: #95a5a6;
     }
 }
-
-
 
 
 html, body {
