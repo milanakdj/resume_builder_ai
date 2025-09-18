@@ -48,7 +48,9 @@ def ui():
             outputs=output_text
         )
         def update_items():
-            return list_folders()
+            folders = list_folders()
+            return gr.update(choices=folders, value=None)
+        
         # Dynamically populate the dropdown when the app loads
         demo.load(
             fn=update_items,

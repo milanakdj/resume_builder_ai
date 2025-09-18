@@ -1,106 +1,502 @@
 {% extends 'baselayout.html' %}
 
 {% block content %}
+<style>
+    /* Resume form specific styles that work with your base layout */
+    .resume-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .resume-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .resume-header h2 {
+        font-size: 2.5em;
+        font-weight: 300;
+        margin: 0 0 10px 0;
+    }
+
+    .resume-header p {
+        opacity: 0.9;
+        font-size: 1.1em;
+        margin: 0;
+    }
+
+    .form-content {
+        padding: 40px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+
+    .section {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .section h3 {
+        color: #1e293b;
+        font-size: 1.8em;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #4f46e5;
+        display: inline-block;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        .resume-container {
+            margin: 10px;
+            border-radius: 10px;
+        }
+        .form-content {
+            padding: 20px;
+        }
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95em;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #fafafa;
+        box-sizing: border-box;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #4f46e5;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-group input[type="text"]:invalid,
+    .form-group input[type="email"]:invalid,
+    .form-group textarea:invalid {
+        border-color: #ef4444;
+    }
+
+    .form-group input[type="text"]:invalid:focus,
+    .form-group input[type="email"]:invalid:focus,
+    .form-group textarea:invalid:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .dynamic-section {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+        position: relative;
+    }
+
+    .dynamic-section h4 {
+        color: #4f46e5;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        width: 100%;
+        padding: 16px;
+        font-size: 18px;
+        margin-top: 30px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-remove {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 8px 16px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .btn-remove:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .required-indicator {
+        color: #ef4444;
+        margin-left: 4px;
+    }
+
+    .form-help {
+        font-size: 0.85em;
+        color: #6b7280;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    /* Animation for new sections */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 500px;
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-20px);
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    .dynamic-section {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    /* Loading state for submit button */
+    .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    /* Scrollbar styling for form content */
+    .form-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .form-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .form-content::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .form-content::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+
 <script>
-        function addEducation() {
-                const container = document.getElementById("education");
-                const index = container.children.length;
-                const html = `
-                    <div class="education">
-                        <h4>Education #${index + 1}</h4>
-                        <label>University:</label><input type="text" name="education_university"><br>
-                        <label>Degree:</label><input type="text" name="education_degree"><br>
-                        <label>GPA:</label><input type="text" name="education_gpa"><br>
-                        <label>Graduation Date:</label><input type="text" name="education_graduation_date"><br>
+    let educationCount = 0;
+    let experienceCount = 0;
+    let projectCount = 0;
+    let skillCount = 0;
+
+    function addEducation() {
+        const container = document.getElementById("education");
+        educationCount++;
+        const html = `
+            <div class="dynamic-section" id="education-${educationCount}">
+                <h4>Education #${educationCount}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>University <span class="required-indicator">*</span></label>
+                        <input type="text" name="education_university" required>
                     </div>
-                    <hr>
-                `;
-                container.insertAdjacentHTML("beforeend", html);
-            }
-        function addExperience() {
-            const container = document.getElementById("experiences");
-            const index = container.children.length;
-            const html = `
-                <div class="experience">
-                    <h4>Experience #${index + 1}</h4>
-                    <label>Title:</label><input type="text" name="experience_title"><br>
-                    <label>Company:</label><input type="text" name="experience_company"><br>
-                    <label>Duration:</label><input type="text" name="experience_duration"><br>
-                    <label>Responsibilities (comma-separated):</label><br>
-                    <textarea name="experience_responsibilities" rows="3" cols="60"></textarea><br>
+                    <div class="form-group">
+                        <label>Degree <span class="required-indicator">*</span></label>
+                        <input type="text" name="education_degree" required>
+                    </div>
                 </div>
-                <hr>
-            `;
-            container.insertAdjacentHTML("beforeend", html);
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>GPA <span class="required-indicator">*</span></label>
+                        <input type="text" name="education_gpa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Graduation Date <span class="required-indicator">*</span></label>
+                        <input type="text" name="education_graduation_date" required placeholder="e.g., May 2024">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-remove" onclick="removeSection('education-${educationCount}')">Remove</button>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    function addExperience() {
+        const container = document.getElementById("experiences");
+        experienceCount++;
+        const html = `
+            <div class="dynamic-section" id="experience-${experienceCount}">
+                <h4>Experience #${experienceCount}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Job Title <span class="required-indicator">*</span></label>
+                        <input type="text" name="experience_title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company <span class="required-indicator">*</span></label>
+                        <input type="text" name="experience_company" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Duration <span class="required-indicator">*</span></label>
+                    <input type="text" name="experience_duration" required placeholder="e.g., Jan 2022 - Present">
+                </div>
+                <div class="form-group">
+                    <label>Key Responsibilities <span class="required-indicator">*</span></label>
+                    <textarea name="experience_responsibilities" rows="4" required placeholder="Describe your key responsibilities and achievements (comma-separated)..."></textarea>
+                </div>
+                <button type="button" class="btn btn-remove" onclick="removeSection('experience-${experienceCount}')">Remove</button>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    function addProject() {
+        const container = document.getElementById("projects");
+        projectCount++;
+        const html = `
+            <div class="dynamic-section" id="project-${projectCount}">
+                <h4>Project #${projectCount}</h4>
+                <div class="form-group">
+                    <label>Project Name <span class="required-indicator">*</span></label>
+                    <input type="text" name="project_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description <span class="required-indicator">*</span></label>
+                    <textarea name="project_description" rows="4" required placeholder="Describe the project, technologies used, and your role..."></textarea>
+                </div>
+                <button type="button" class="btn btn-remove" onclick="removeSection('project-${projectCount}')">Remove</button>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    function addSkills() {
+        const container = document.getElementById("skills");
+        skillCount++;
+        const html = `
+            <div class="dynamic-section" id="skill-${skillCount}">
+                <h4>Skill #${skillCount}</h4>
+                <div class="form-group">
+                    <label>Skill Name <span class="required-indicator">*</span></label>
+                    <input type="text" name="skill_name" required placeholder="e.g., JavaScript, Project Management">
+                </div>
+                <div class="form-group">
+                    <label>Description <span class="required-indicator">*</span></label>
+                    <textarea name="skill_description" rows="3" required placeholder="Describe your proficiency level and experience with this skill..."></textarea>
+                </div>
+                <button type="button" class="btn btn-remove" onclick="removeSection('skill-${skillCount}')">Remove</button>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    function removeSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => section.remove(), 300);
+        }
+    }
+
+    // Form validation and submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('resumeForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = document.querySelector('.btn-submit');
+                
+                // Check if at least one dynamic section is added for each category
+                const educationSections = document.querySelectorAll('#education .dynamic-section').length;
+                const experienceSections = document.querySelectorAll('#experiences .dynamic-section').length;
+                const projectSections = document.querySelectorAll('#projects .dynamic-section').length;
+                const skillSections = document.querySelectorAll('#skills .dynamic-section').length;
+
+                if (educationSections === 0 || experienceSections === 0 || projectSections === 0 || skillSections === 0) {
+                    e.preventDefault();
+                    alert('Please add at least one entry for Education, Experience, Projects, and Skills.');
+                    return;
+                }
+
+                // Add loading state
+                submitBtn.textContent = 'Generating Resume...';
+                submitBtn.disabled = true;
+            });
         }
 
-        function addProject() {
-            const container = document.getElementById("projects");
-            const index = container.children.length;
-            const html = `
-                <div class="project">
-                    <h4>Project #${index + 1}</h4>
-                    <label>Name:</label><input type="text" name="project_name"><br>
-                    <label>Description:</label><br>
-                    <textarea name="project_description" rows="3" cols="60"></textarea><br>
+        // Initialize with one section of each type
+        addEducation();
+        addExperience();
+        addProject();
+        addSkills();
+    });
+</script>
+
+<div class="resume-container">
+    <div class="resume-header">
+        <h2>Resume Builder</h2>
+        <p>Create your professional resume with ease</p>
+    </div>
+    
+    <div class="form-content">
+        <form method="post" action="/generate_json/" id="resumeForm">
+            
+            <div class="section">
+                <h3>Basic Information</h3>
+                <div class="form-group">
+                    <label>File Name <span class="required-indicator">*</span></label>
+                    <input type="text" name="file_name" required>
+                    <div class="form-help">This will be the name of your generated resume file</div>
                 </div>
-                <hr>
-            `;
-            container.insertAdjacentHTML("beforeend", html);
-        }
-        function addSkills() {
-            const container = document.getElementById("skills");
-            const index = container.children.length;
-            const html = `
-                <div class="skills">
-                    <h4>Skill #${index + 1}</h4>
-                    <label>Name:</label><input type="text" name="skill_name"><br>
-                    <label>Description:</label><br>
-                    <textarea name="skill_description" rows="3" cols="60"></textarea><br>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name <span class="required-indicator">*</span></label>
+                        <input type="text" name="header_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number <span class="required-indicator">*</span></label>
+                        <input type="text" name="header_phone" required>
+                    </div>
                 </div>
-                <hr>
-            `;
-            container.insertAdjacentHTML("beforeend", html);
-        }
-    </script>
-<h2>Fill Resume Details</h2>
-    <form method="post" action="/generate_json/">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email Address <span class="required-indicator">*</span></label>
+                        <input type="email" name="header_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn Profile <span class="required-indicator">*</span></label>
+                        <input type="text" name="header_linkedin" required>
+                    </div>
+                </div>
+            </div>
 
-        <h3>Header</h3>
-        <label>File Name:</label>
-        <input type="text" name="file_name" required><br>
-        <label>Name:</label>
-        <input type="text" name="header_name" required><br>
-        <label>Phone:</label>
-        <input type="text" name="header_phone"><br>
-        <label>Email:</label>
-        <input type="email" name="header_email"><br>
-        <label>LinkedIn:</label>
-        <input type="text" name="header_linkedin"><br>
+            <div class="section">
+                <h3>Professional Summary</h3>
+                <div class="form-group">
+                    <label>Summary <span class="required-indicator">*</span></label>
+                    <textarea name="summary" rows="5" required placeholder="Write a brief professional summary highlighting your key skills and experience..."></textarea>
+                </div>
+            </div>
 
-        <h3>Summary</h3>
-        <textarea name="summary" rows="5" cols="60"></textarea><br>
+            <div class="section">
+                <h3>Education</h3>
+                <div id="education"></div>
+                <button type="button" class="btn btn-add" onclick="addEducation()">+ Add Education</button>
+            </div>
 
-        <h3>Education</h3>
-        <div id="education"></div>
-        <button type="button" onclick="addEducation()">Add Education</button>
+            <div class="section">
+                <h3>Work Experience</h3>
+                <div id="experiences"></div>
+                <button type="button" class="btn btn-add" onclick="addExperience()">+ Add Experience</button>
+            </div>
 
-        <h3>Experiences</h3>
-        <div id="experiences"></div>
-        <button type="button" onclick="addExperience()">Add Experience</button>
+            <div class="section">
+                <h3>Projects</h3>
+                <div id="projects"></div>
+                <button type="button" class="btn btn-add" onclick="addProject()">+ Add Project</button>
+            </div>
 
-        <h3>Projects</h3>
-        <div id="projects"></div>
-        <button type="button" onclick="addProject()">Add Project</button>
+            <div class="section">
+                <h3>Skills</h3>
+                <div id="skills"></div>
+                <button type="button" class="btn btn-add" onclick="addSkills()">+ Add Skill</button>
+            </div>
 
-        <h3>Skills</h3>
-        <div id="skills"></div>
-        <button type="button" onclick="addSkills()">Add Skills</button>
+            <div class="section">
+                <h3>Availability</h3>
+                <div class="form-group">
+                    <label>When are you available to start? <span class="required-indicator">*</span></label>
+                    <textarea name="availability" rows="2" required placeholder="e.g., Immediately, 2 weeks notice, etc."></textarea>
+                </div>
+            </div>
 
-        <h3>Availability</h3>
-        <textarea name="availability" rows="2" cols="60"></textarea><br><br>
-
-        <button type="submit">Generate</button>
-    </form>
+            <button type="submit" class="btn btn-submit">Generate Resume</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
