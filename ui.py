@@ -2,7 +2,7 @@ import gradio as gr
 from core import main
 
 
-def generate_resume(job_description, job_name, it_check:bool):
+def generate_resume(job_name, job_description, it_check:bool):
     final_path = main(job_description=job_description, job_name=job_name, it_check= it_check)
     if it_check:
         return "Hello ujjwal your new IT Resume has been created in " + final_path
