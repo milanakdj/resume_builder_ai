@@ -7,14 +7,18 @@ from src.services.utils import retry_with_backoff
 from llama_index.core.llms import ChatMessage, MessageRole
 from llama_index.llms.openai_like import OpenAILike
 from pydantic import Field, model_validator
-
+from llama_index.llms.google_genai import GoogleGenAI
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
     TomlConfigSettingsSource,
+    BaseModel
 )
 from typing import Optional, Tuple, Type, Any
+import outlines
+import ollama
+
 
 # openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -87,21 +91,44 @@ def get_llm():
             llm_settings.extra_arguments or settings.llm.extra_arguments or {}
         )
 
-    llm = OpenAILike(
-        api_base=api_base,
-        api_key=api_key,
-        model=model,
-        temperature=temperature,
-        timeout=timeout,
-        context_window=context_length,
-        max_tokens=max_new_tokens,
-        is_chat_model=True,
-        reuse_client=False,
-        max_retries=3,
-        additional_kwargs={"extra_body": extra_arguments},
-    )
+    if "gemini" in model: 
+        llm = GoogleGenAI(
+            # api_base=api_base,
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            timeout=timeout,
+            context_window=context_length,
+            max_tokens=max_new_tokens,
+            is_chat_model=True,
+            reuse_client=False,
+            max_retries=3,
+            additional_kwargs={"extra_body": extra_arguments},
+        )
+    else:
+        llm = OpenAILike(
+            api_base=api_base,
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            timeout=timeout,
+            context_window=context_length,
+            max_tokens=max_new_tokens,
+            is_chat_model=True,
+            reuse_client=False,
+            max_retries=3,
+            additional_kwargs={"extra_body": extra_arguments},
+        )
 
     return llm
+
+llm = get_llm()
+settings = get_settings()
+client = ollama.Client()
+model = outlines.from_ollama(
+    client,
+    settings.llm.model_name,
+)
 
 def chat_completion(input, system_message=None, schema_cls=None) -> str:
     llm = get_llm()
@@ -113,7 +140,22 @@ def chat_completion(input, system_message=None, schema_cls=None) -> str:
 
     chat_list.append(ChatMessage(role=MessageRole.USER, content=input))
 
+    if schema_cls:
+        # schema = schema_cls.model_json_schema()
+        # response_format = {
+        #     "type": "json_schema",
+        #     "json_schema": {"name": "json_structured_response", "schema": schema},
+        # }
+        # response = llm.chat(chat_list, response_format=response_format)
+
+        response = model(chat_list, schema_cls)
+
+        result = schema_cls.model_validate_json(response)
+
+        return result
+
     response = llm.chat(chat_list)
+
     return str(
         response.message.content if hasattr(response, "message") else response.content
     )
@@ -170,19 +212,32 @@ def extract_skills_from_job(job_description, current_skills,):
         Return the result strictly in JSON, using the format shown above.
         """
 
-    response = chat_completion(
-        input = prompt,
-    )
+    class skill(BaseModel):
+        name: str
+        description: list[str]
 
-    response = str(
-        response.message.content if hasattr(response, "message") else response.content
-    )
-    
-    # Extract raw content and JSON
-    match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-    if match:
-        json_content = match.group(1).strip()
+    class skills(BaseModel):
+        skills: list[skill]
+
+    try:
+        response = chat_completion(
+            input = prompt,
+            schema_cls= skills
+        )
+            
+        response = str(
+            response.message.content if hasattr(response, "message") else response.content
+        )
+        
+        # Extract raw content and JSON
+        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
+        if match:
+            json_content = match.group(1).strip()
         return json.loads(json_content)  # Parse JSON response into Python dictionary
+        
+    except Exception as e:
+        print(str(e))         
+        return {"Skills": {}}  # Return an empty structure on failure
             
 
 @retry_with_backoff()
@@ -238,22 +293,34 @@ def extract_experiences_from_job(job_description, current_experiences, ):
         Return the result strictly in JSON, using the format shown above.
         """
 
-    response = chat_completion(
-        input = prompt,
-    )
+    class Experience(BaseModel):
+        title: str
+        company: str
+        duration: str
+        responsibilities: list[str]
 
-    # Extract raw content and JSON
-    response = str(
-        response.message.content if hasattr(response, "message") else response.content
-    )
-    match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-    if match:
-        json_content = match.group(1).strip()
+    class Experiences(BaseModel):
+        experiences: list[Experience]
+
+    try:
         
-        return json.loads(json_content)  # Parse JSON response into Python dictionary
+        response = chat_completion(
+            input = prompt,
+            schema_cls= Experiences
+        )
+        # Extract raw content and JSON
+        response = str(
+            response.message.content if hasattr(response, "message") else response.content
+        )
+        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
+        if match:
+            json_content = match.group(1).strip()
             
-
-    return {"Skills": {}}  # Return an empty structure on failure
+        return json.loads(json_content)  # Parse JSON response into Python dictionary
+        
+    except Exception as e:
+        print(str(e))         
+        return {"Skills": {}}  # Return an empty structure on failure
 
 @retry_with_backoff()
 def extract_projects_from_job(job_description, current_projects):
@@ -296,20 +363,36 @@ def extract_projects_from_job(job_description, current_projects):
 
         Return the result strictly in JSON, using the format shown above.
         """
+    
+    class project(BaseModel):
+        name:str
+        description:str
 
-    response = chat_completion(
+    class projects(BaseModel):
+        projects: list[project]
+    
+
+    
+    try:
+        response = chat_completion(
         input = prompt,
-    )
+        schema_cls= projects
+        )
 
-    # Extract raw content and JSON
-    response = str(
-        response.message.content if hasattr(response, "message") else response.content
-    )
-    match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-    if match:
-        json_content = match.group(1).strip()
-        
+        # Extract raw content and JSON
+        response = str(
+            response.message.content if hasattr(response, "message") else response.content
+        )
+        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
+        if match:
+            json_content = match.group(1).strip()
+            
         return json.dumps(json_content)  # Parse JSON response into Python dictionary
+
+    
+    except Exception as e:
+        print(str(e))         
+        return {"projects": []}  # Return an empty structure on failure
             
       
 
@@ -331,10 +414,8 @@ def extract_summary_from_job(job_description, enhanced_skills, enhanced_projects
         Below is a list of skills grouped by categories. 
 
         Example format:
-        {{
-            "summary": 
             "Friendly and engaging team member with strong experience in retail and food service environments, known for delivering exceptional customer experiences. Adept at handling transactions, assisting with product inquiries, and creating welcoming, clean, and organized spaces. Passionate about retail, with a positive attitude and a focus on building customer loyalty through helpful service and effective communication. Quick to adapt, eager to learn, and committed to supporting a collaborative team environment."
-        }}
+        
 
 
         Current Skills:
@@ -352,21 +433,24 @@ def extract_summary_from_job(job_description, enhanced_skills, enhanced_projects
         Job Description:
         {job_description}
 
-        Return the result strictly in JSON, using the format shown above.
+        Return the result strictly in String, using the format shown above.
         """
 
     response = chat_completion(
         input = prompt,
     )
 
-    # Extract raw content and JSON
-    response = str(
-        response.message.content if hasattr(response, "message") else response.content
-    )
-    match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-    if match:
-        json_content = match.group(1).strip()
-        
-        return json.loads(json_content)  # Parse JSON response into Python dictionary
+    try:
+        # Extract raw content and JSON
+        response = str(
+            response.message.content if hasattr(response, "message") else response.content
+        )
+            
+        return {"summary": response}  # Parse JSON response into Python dictionary
+
+
+    except Exception as e:
+        print(str(e))         
+        return {"summary": ""}  # Return an empty structure on failure
             
 
