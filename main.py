@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi import HTTPException, status
 import json
 from datetime import datetime
-from contextlib import asynccontextmanager
+import uvicorn
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="super-secret-key")
@@ -180,3 +180,6 @@ async def generate(request: Request, user_name = Depends(require_login)):
 
 app = return_gradio_ui(app= app, auth_dependency= require_login)
 app.include_router(router= router)
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
