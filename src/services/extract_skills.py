@@ -13,8 +13,8 @@ from pydantic_settings import (
     PydanticBaseSettingsSource,
     SettingsConfigDict,
     TomlConfigSettingsSource,
-    BaseModel
 )
+from pydantic import BaseModel
 from typing import Optional, Tuple, Type, Any
 import outlines
 import ollama
