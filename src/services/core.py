@@ -54,7 +54,6 @@ def main(job_description="", job_name="", input_file_name:str = "", it_check:boo
 
     if it_check:
         current_projects = resume_skeleton["projects"]
-        import ipdb;ipdb.set_trace()
         enhanced_projects = extract_projects_from_job(args.job_description, current_projects)
         print("enhanced projects: ", enhanced_projects, "\n\n")
 
@@ -82,6 +81,7 @@ def main(job_description="", job_name="", input_file_name:str = "", it_check:boo
     # Step 3: Update Resume Skeleton with Enhanced Skills
     updated_resume = update_resume_with_skills(resume_skeleton, enhanced_skills)
     updated_resume = update_resume_with_summary(resume_skeleton, enhanced_summary)
+    
 
     # Step 4: Generate Resume
     generate_compact_resume(

@@ -86,7 +86,8 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
     if data.get("projects"):
         # Project Experience Section
         doc.add_heading("Project Experience", level=2)
-        for project in data["projects"]:
+        project_data = data['projects'].get("projects", [])
+        for project in project_data:
             # Create a paragraph for the project
             project_paragraph = doc.add_paragraph()
 

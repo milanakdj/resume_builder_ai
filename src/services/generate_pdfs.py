@@ -182,7 +182,7 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
     elif data.get("projects"):
             # Project Experience Section
         add_wrapped_text_with_styles("Project Experience", font="Helvetica", size=12, bold_prefix=True)
-        for project in data["projects"]:
+        for project in data["projects"].get("projects", []):
             add_wrapped_text_with_styles(project["name"], project["description"], bold_prefix=True)
 
 
