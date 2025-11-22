@@ -9,3 +9,4 @@ outputs
 resume_skeleton.yaml
 yaml_files
 json_files
+settings.toml

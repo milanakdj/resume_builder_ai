@@ -1,0 +1,21 @@
+[llm]
+api_base = "https://xyz.com/v1"
+model_name = "gpt-4o-mini"
+api_key = "sk-................."
+context_length = 5028
+max_new_tokens = 2048
+temperature = 0.1
+timeout = 300
+
+embedding_api_base = "http://209.208.72.50:8000/v1"
+embedding_model_name = "text-embedding-ada-002"
+# embedding_api_key = ""
+tokenizer_path = "./tokenizer/llama3"
+#[llm.extra_arguments]
+#min_p = 0.0
+#top_k = 90
+#top_p = 0.95
+
+
+
+# embedding_api_key = ""
