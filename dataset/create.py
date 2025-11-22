@@ -205,9 +205,12 @@ if __name__ == "__main__":
 
         modified_json_list = copy.deepcopy(json_list)
         
-        while True:
+        try_the_loop = 0
+        while try_the_loop < 5:
             try:
                 for json_str in modified_json_list[i:]:
+                    if json_str == "\n":
+                        continue
                     row = f"Resume in JSON form: {json_str}"
                     print(f"[{i+1}] ROW: {row[:100]}..............")
                     complete_resume = chat_completion(system_message= system_message, input = row)
@@ -217,6 +220,7 @@ if __name__ == "__main__":
                     
                     to_add_rows.append({field_names[0]: json_str, field_names[1]: complete_resume})
                     time.sleep(0.5)
+                    i+=1
 
             except Exception as e:
                 print(str(e))
@@ -236,19 +240,19 @@ if __name__ == "__main__":
 
                 retry = int(retry_delay.split("s")[0])
 
+                try_the_loop += 1 
+
                 time.sleep(retry+2)
 
     except Exception as e:
         print(str(e))
 
     finally:
-
         json_list = json_list[i+1:]
-
         with open(dataset_name , "w") as f:
             for item in json_list:
                 if item:
-                    f.write(item+"\n")
+                    f.write(item.strip()+"\n")
         
 
         data_list.extend(to_add_rows)
