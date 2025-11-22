@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from typing import Optional, Tuple, Type, Any
 import outlines
 import ollama
+from google import genai
 
 
 # openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -37,6 +38,7 @@ class LLMSettings(BaseSettings):
     tokenizer_path: Optional[str] = Field(default=None, description="Path to custom tokenizer.")
     tokenizer_model: Optional[str] = Field(default="gpt-4o", description="Name of the models supported by tiktoken.")
     extra_arguments: Optional[dict[str, Any]] = Field(default={}, description="Additional API call arguments.")
+    model_type: str = Field(default = "ChatGPT", description= "Which model to use Ollama or ChatGPT or Gemini")
 
 
     @model_validator(mode="after")
@@ -51,7 +53,6 @@ class LLMSettings(BaseSettings):
 
 class AppConfig(BaseSettings):
     llm: LLMSettings
-    
     
     model_config = SettingsConfigDict(toml_file="settings.toml", extra="allow")
 
@@ -77,21 +78,20 @@ def get_settings() -> AppConfig:
 
 def get_llm():
     settings = get_settings()
-    llm_settings = settings.llm
 
-    if llm_settings:
-        api_base = llm_settings.api_base or settings.llm.api_base
-        api_key = llm_settings.api_key or api_key
-        model = llm_settings.model_name or settings.llm.model_name
-        temperature = llm_settings.temperature or settings.llm.temperature
-        timeout = llm_settings.timeout or settings.llm.timeout
-        context_length = llm_settings.context_length or settings.llm.context_length
-        max_new_tokens = llm_settings.max_new_tokens or settings.llm.max_new_tokens
-        extra_arguments = (
-            llm_settings.extra_arguments or settings.llm.extra_arguments or {}
-        )
+    api_base = settings.llm.api_base
+    api_key = settings.llm.api_key 
+    model = settings.llm.model_name
+    temperature = settings.llm.temperature
+    timeout = settings.llm.timeout
+    context_length = settings.llm.context_length
+    max_new_tokens = settings.llm.max_new_tokens
+    extra_arguments = (
+        settings.llm.extra_arguments or {}
+    )
+    model_type = settings.llm.model_type
 
-    if "gemini" in model: 
+    if model_type == "Gemini": 
         llm = GoogleGenAI(
             # api_base=api_base,
             api_key=api_key,
@@ -105,7 +105,7 @@ def get_llm():
             max_retries=3,
             additional_kwargs={"extra_body": extra_arguments},
         )
-    else:
+    elif model_type == "ChatGPT" or model_type == "Ollama":
         llm = OpenAILike(
             api_base=api_base,
             api_key=api_key,
@@ -122,16 +122,42 @@ def get_llm():
 
     return llm
 
+
+    
+
+
 llm = get_llm()
 settings = get_settings()
-client = ollama.Client()
-model = outlines.from_ollama(
-    client,
-    settings.llm.model_name,
-)
 
+def get_client():
+    model = None
+    if settings.llm.model_type == "Ollama":
+        client = ollama.Client()
+        model = outlines.from_ollama(
+            client,
+            settings.llm.model_name,
+        )
+    
+    if settings.llm.model_type == "ChatGPT":
+        client = openai.OpenAI()
+        model = outlines.from_openai(
+            client,
+            settings.llm.model_name
+        )
+
+    if settings.llm.model_type == "Gemini":
+        client = genai.Client()
+        model = outlines.from_gemini(
+            client,
+            settings.llm.model_name
+        )
+    
+    return model
+
+@retry_with_backoff()
 def chat_completion(input, system_message=None, schema_cls=None) -> str:
     llm = get_llm()
+    model = get_client()
 
     chat_list: list[ChatMessage] = []
 
@@ -148,20 +174,21 @@ def chat_completion(input, system_message=None, schema_cls=None) -> str:
         # }
         # response = llm.chat(chat_list, response_format=response_format)
 
-        response = model(chat_list, schema_cls)
+        response = model(input, schema_cls)
 
         result = schema_cls.model_validate_json(response)
-
         return result
 
     response = llm.chat(chat_list)
 
+    if isinstance(response, str):
+        return response
+    
     return str(
         response.message.content if hasattr(response, "message") else response.content
     )
 
 
-@retry_with_backoff()
 def extract_skills_from_job(job_description, current_skills,):
     """
     Extract skills from a job description with a retry mechanism to handle API failures.
@@ -224,23 +251,22 @@ def extract_skills_from_job(job_description, current_skills,):
             input = prompt,
             schema_cls= skills
         )
+
+        return response.model_dump()
             
-        response = str(
-            response.message.content if hasattr(response, "message") else response.content
-        )
+        # response = str(
+        #     response.message.content if hasattr(response, "message") else response.content
+        # )
         
         # Extract raw content and JSON
-        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-        if match:
-            json_content = match.group(1).strip()
-        return json.loads(json_content)  # Parse JSON response into Python dictionary
+       
+             # Parse JSON response into Python dictionary
         
     except Exception as e:
         print(str(e))         
         return {"Skills": {}}  # Return an empty structure on failure
             
 
-@retry_with_backoff()
 def extract_experiences_from_job(job_description, current_experiences, ):
     """
     Extract skills from a job description with a retry mechanism to handle API failures.
@@ -308,21 +334,21 @@ def extract_experiences_from_job(job_description, current_experiences, ):
             input = prompt,
             schema_cls= Experiences
         )
-        # Extract raw content and JSON
-        response = str(
-            response.message.content if hasattr(response, "message") else response.content
-        )
-        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-        if match:
-            json_content = match.group(1).strip()
+        return response.model_dump()
+        # # Extract raw content and JSON
+        # response = str(
+        #     response.message.content if hasattr(response, "message") else response.content
+        # )
+        # match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
+        # if match:
+        #     json_content = match.group(1).strip()
             
-        return json.loads(json_content)  # Parse JSON response into Python dictionary
+        # return json.loads(json_content)  # Parse JSON response into Python dictionary
         
     except Exception as e:
         print(str(e))         
         return {"Skills": {}}  # Return an empty structure on failure
 
-@retry_with_backoff()
 def extract_projects_from_job(job_description, current_projects):
     """
     Extract skills from a job description with a retry mechanism to handle API failures.
@@ -371,23 +397,23 @@ def extract_projects_from_job(job_description, current_projects):
     class projects(BaseModel):
         projects: list[project]
     
-
     
     try:
         response = chat_completion(
-        input = prompt,
-        schema_cls= projects
-        )
+            input = prompt,
+            schema_cls= projects
+            )
 
-        # Extract raw content and JSON
-        response = str(
-            response.message.content if hasattr(response, "message") else response.content
-        )
-        match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
-        if match:
-            json_content = match.group(1).strip()
+        return response.model_dump()
+        # # Extract raw content and JSON
+        # response = str(
+        #     response.message.content if hasattr(response, "message") else response.content
+        # )
+        # match = re.search(r"```json\n(.*?)\n```", response, re.DOTALL)
+        # if match:
+        #     json_content = match.group(1).strip()
             
-        return json.dumps(json_content)  # Parse JSON response into Python dictionary
+        # return json.dumps(json_content)  # Parse JSON response into Python dictionary
 
     
     except Exception as e:
@@ -396,7 +422,6 @@ def extract_projects_from_job(job_description, current_projects):
             
       
 
-@retry_with_backoff()
 def extract_summary_from_job(job_description, enhanced_skills, enhanced_projects, enhanced_experiences, current_summary):
     """
     Extract skills from a job description with a retry mechanism to handle API failures.
@@ -436,14 +461,9 @@ def extract_summary_from_job(job_description, enhanced_skills, enhanced_projects
         Return the result strictly in String, using the format shown above.
         """
 
-    response = chat_completion(
-        input = prompt,
-    )
-
     try:
-        # Extract raw content and JSON
-        response = str(
-            response.message.content if hasattr(response, "message") else response.content
+        response = chat_completion(
+            input = prompt,
         )
             
         return {"summary": response}  # Parse JSON response into Python dictionary
