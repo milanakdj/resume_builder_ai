@@ -52,23 +52,21 @@ def main(job_description="", job_name="", input_file_name:str = "", it_check:boo
     # Step 2: Extract and Enhance Skills
     current_skills = resume_skeleton["skills"]
 
-    if it_check:
-        current_projects = resume_skeleton["projects"]
-        enhanced_projects = extract_projects_from_job(args.job_description, current_projects)
-        print("enhanced projects: ", enhanced_projects, "\n\n")
+    current_projects = resume_skeleton["projects"]
+    enhanced_projects = extract_projects_from_job(args.job_description, current_projects)
+    print("enhanced projects: ", enhanced_projects, "\n\n")
 
-        updated_resume = update_resume_with_project(resume_skeleton, enhanced_projects)
-        updated_resume = update_resume_with_experience(resume_skeleton, {})
-        enhanced_experiences = ""
+    updated_resume = update_resume_with_project(resume_skeleton, enhanced_projects)
+    updated_resume = update_resume_with_experience(resume_skeleton, {})
+    enhanced_experiences = ""
 
-    else:
-        current_experiences = resume_skeleton["experience"]
-        enhanced_experiences = extract_experiences_from_job(args.job_description, current_experiences)
-        print("enhanced experiences: ", enhanced_experiences, "\n\n")
+    current_experiences = resume_skeleton["experience"]
+    enhanced_experiences = extract_experiences_from_job(args.job_description, current_experiences)
+    print("enhanced experiences: ", enhanced_experiences, "\n\n")
 
-        updated_resume = update_resume_with_experience(resume_skeleton, enhanced_experiences)
-        updated_resume = update_resume_with_project(resume_skeleton, {})
-        enhanced_projects = ""
+    updated_resume = update_resume_with_experience(resume_skeleton, enhanced_experiences)
+    updated_resume = update_resume_with_project(resume_skeleton, {})
+    enhanced_projects = ""
 
     current_summary = resume_skeleton["summary"]
 

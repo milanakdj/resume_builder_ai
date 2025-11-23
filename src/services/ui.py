@@ -4,12 +4,10 @@ from src.services.core import main
 
 INDEX_DIR = "json_files"
 
-def generate_resume(job_name, job_description, input_file_name, it_check:bool):
-    final_path = main(job_description=job_description, job_name=job_name, input_file_name = input_file_name, it_check= it_check)
-    if it_check:
-        return "Hello your new IT Resume has been created in " + final_path
-    else:
-        return "Hello your new Resume has been created in " + final_path
+def generate_resume(job_name, job_description, input_file_name, ):
+    final_path = main(job_description=job_description, job_name=job_name, input_file_name = input_file_name, )
+    
+    return "Hello your new Resume has been created in " + final_path
     
 def list_folders():
     """List folders inside INDEX_DIR for dropdown."""
@@ -37,14 +35,13 @@ def ui():
         
         with gr.Row():
             folder_dropdown = gr.Dropdown(choices=list_folders(), label="Select Folder", value=None)
-            it_checkbox = gr.Checkbox(label="IT job", info="Is it a job related to the field of IT?")
         
         output_text = gr.Textbox(label="Output")
         
         generate_button = gr.Button("Generate Resume")
         generate_button.click(
             fn=generate_resume,
-            inputs=[job_name_input, job_description_input, folder_dropdown, it_checkbox],
+            inputs=[job_name_input, job_description_input, folder_dropdown, ],
             outputs=output_text
         )
         def update_items():
