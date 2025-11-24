@@ -34,8 +34,8 @@ Your login credentials are stored in `src/db/auth.py`:
 ```python
 # src/db/auth.py
 USERS = {
-    "admin": "password123",
-    "user1": "mypassword"
+    "username": "password123",
+    "password": "mypassword"
 }
 ```
 
@@ -213,13 +213,6 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
-### Environment Variables
-```bash
-# Create .env file
-FASTAPI_ENV=production
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=your-db-url
-```
 
 ## Usage Guide
 
