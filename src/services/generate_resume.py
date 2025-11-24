@@ -107,7 +107,7 @@ def generate_compact_resume(data, output_file="compact_resume.docx",generate_pdf
 
         # Work Experience Section
         doc.add_heading("Work Experience", level=2)
-        for exp in data["experience"].get("experience", {}):
+        for exp in data["experience"].get("experiences", []):
             work_heading = doc.add_paragraph()
             
             work_heading.add_run(f"{exp['title']} - {exp['company']} | ").bold = True
