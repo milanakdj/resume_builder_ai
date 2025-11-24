@@ -172,14 +172,15 @@ def save_as_pdf(data, pdf_file="resume.pdf"):
         add_wrapped_text_with_styles(
             "Work Experience", font="Helvetica", size=12, bold_prefix=True
         )
-        for exp in data["experience"].get("experience", {}):
+        for exp in data["experience"].get("experiences", []):
             add_wrapped_text_with_styles(
                 f"{exp['title']} - {exp['company']} ({exp['duration']})", bold_prefix=True
             )
             for responsibility in exp.get("responsibilities", []):
                 add_wrapped_text_with_styles(f"- {responsibility}", indent=10)
         draw_line()
-    elif data.get("projects"):
+
+    if data.get("projects"):
             # Project Experience Section
         add_wrapped_text_with_styles("Project Experience", font="Helvetica", size=12, bold_prefix=True)
         for project in data["projects"].get("projects", []):
