@@ -57,7 +57,7 @@ def main(job_description="", job_name="", input_file_name:str = "", it_check:boo
     print("enhanced projects: ", enhanced_projects, "\n\n")
 
     updated_resume = update_resume_with_project(resume_skeleton, enhanced_projects)
-    updated_resume = update_resume_with_experience(resume_skeleton, {})
+    # updated_resume = update_resume_with_experience(resume_skeleton, {})
     enhanced_experiences = ""
 
     current_experiences = resume_skeleton["experience"]
@@ -65,8 +65,8 @@ def main(job_description="", job_name="", input_file_name:str = "", it_check:boo
     print("enhanced experiences: ", enhanced_experiences, "\n\n")
 
     updated_resume = update_resume_with_experience(resume_skeleton, enhanced_experiences)
-    updated_resume = update_resume_with_project(resume_skeleton, {})
-    enhanced_projects = ""
+    # updated_resume = update_resume_with_project(resume_skeleton, {})
+    # enhanced_projects = ""
 
     current_summary = resume_skeleton["summary"]
 
