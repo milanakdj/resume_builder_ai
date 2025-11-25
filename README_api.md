@@ -268,3 +268,6 @@ This project is open source and available under the MIT License.
 **Author:** Milan Shrestha  
 **Version:** 2.0.0 (FastAPI Edition)  
 **Last Updated:** November 2025
+
+
+#TODO: update to using Poetry instead of virtual env
